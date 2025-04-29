@@ -95,22 +95,21 @@ function App() {
   const [userInfo, setUserInfo] = useState<any>(null);
   const [userName, setUserName] = useState<string>('');
 
-  // Add new useEffect for user info
-  useEffect(() => {
+  const checkUserInfo = () => {
     const encodedUserInfo = Cookies.get('userinfo');
     if (encodedUserInfo) {
       try {
         const decoded = JSON.parse(atob(encodedUserInfo));
         setUserInfo(decoded);
-        setUserName(decoded.name || 'Guest'); // Assuming the name is in decoded.name
+        setUserName(decoded.name || 'Guest');
       } catch (error) {
-        console.error('Failed to decode userinfo', error);
+        console.error('Failed to decode userinfo:', error);
         setUserName('Guest');
       }
     } else {
       setUserName('Guest');
     }
-  }, []);
+  };
 
   // Fetch bills from API
   const fetchBills = async () => {
@@ -129,6 +128,7 @@ function App() {
       }));
 
       setExpenses(transformedExpenses);
+      checkUserInfo(); // Check user info after successful bills fetch
       setError(null);
     } catch (err) {
       console.error('Failed to fetch bills:', err);
