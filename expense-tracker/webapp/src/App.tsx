@@ -38,6 +38,7 @@ import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import './App.css';
 import { billsApi, billParserApi, Bill, BillInput } from './services/api';
+import Cookies from 'js-cookie';
 
 // Define green money theme
 const theme = createTheme({
@@ -91,7 +92,25 @@ function App() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const isMobile = useMediaQuery('(max-width:600px)');
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [userName] = useState('John Doe'); // Replace with actual user name from your auth system
+  const [userInfo, setUserInfo] = useState<any>(null);
+  const [userName, setUserName] = useState<string>('');
+
+  // Add new useEffect for user info
+  useEffect(() => {
+    const encodedUserInfo = Cookies.get('userinfo');
+    if (encodedUserInfo) {
+      try {
+        const decoded = JSON.parse(atob(encodedUserInfo));
+        setUserInfo(decoded);
+        setUserName(decoded.name || 'Guest'); // Assuming the name is in decoded.name
+      } catch (error) {
+        console.error('Failed to decode userinfo', error);
+        setUserName('Guest');
+      }
+    } else {
+      setUserName('Guest');
+    }
+  }, []);
 
   // Fetch bills from API
   const fetchBills = async () => {
@@ -229,7 +248,7 @@ function App() {
   };
 
   const handleLogout = () => {
-    // Add your logout logic here
+    window.location.href = "/auth/logout?post_logout_redirect_uri=/";
     handleMenuClose();
   };
 
