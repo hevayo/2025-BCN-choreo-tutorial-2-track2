@@ -1,0 +1,16 @@
+schemaVersion: 1.2
+
+endpoints:
+  - name: receipt-api
+    displayName: Receipt API
+    service:
+      basePath: /
+      port: 8080
+    type: REST
+    networkVisibilities:
+      - Project
+    schemaFilePath: ./openapi.yaml
+dependencies:
+    connectionReferences:
+    - name: Open AI Connection
+      resourceRef: thirdparty:OpenAI/v1
